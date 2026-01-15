@@ -2,10 +2,12 @@
 
 import { useEffect, useState, useRef, ChangeEvent } from "react";
 import axios from "axios";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import Logo from "@/components/Logo";
 import AnimatedBackground from "@/components/AnimatedBackground";
+import UploadSection from "@/components/quiz/uploadSection";
+import ErrorDisplay from "@/components/quiz/errorDisplay";
+import QuizDisplay from "@/components/quiz/quizDisplay";
+import CreateQuizSection from "@/components/quiz/createQuizSection";
+import PdfExport from "@/components/quiz/pdfExport";
 
 function isAxiosErrorWithDetail(
 	err: unknown
@@ -625,692 +627,73 @@ export default function Tool() {
 		}
 	};
 
+	const styles = {
+		container: "relative min-h-screen pt-16 pb-8",
+		innerContainer: "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8",
+	};
+
 	return (
 		<>
 			<AnimatedBackground />
 
-			<div className="relative min-h-screen pt-16 pb-8">
-				<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-					{/* Upload Section - Full Width */}
-					<div className="bg-[#1a1a24] backdrop-blur-md rounded-2xl border border-[#a855f7]/20 p-6 shadow-lg mb-6">
-						{/* Header */}
-						<div className="flex items-center justify-between mb-6">
-							<Link
-								href="/"
-								className="text-sm text-[#a0a0b0] hover:text-[#a855f7] transition-colors flex items-center gap-2"
-							>
-								<svg
-									className="w-4 h-4"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M10 19l-7-7m0 0l7-7m-7 7h18"
-									/>
-								</svg>
-								Back to Home
-							</Link>
-							<Logo />
-						</div>
+			<div className={styles.container}>
+				<div className={styles.innerContainer}>
+					<UploadSection
+						file={file}
+						fileInputRef={fileInputRef}
+						dragActive={dragActive}
+						uploading={uploading}
+						uploadProgress={uploadProgress}
+						sessionId={sessionId}
+						showQuizModeSelection={showQuizModeSelection}
+						quizMode={quizMode}
+						selectedMode={selectedMode}
+						createQuizError={createQuizError}
+						isTyping={isTyping}
+						loadingStep={loadingStep}
+						loadingSteps={loadingSteps}
+						quizQuestions={quizQuestions}
+						handleDrag={handleDrag}
+						handleDrop={handleDrop}
+						handleFileChange={handleFileChange}
+						handleModeSelection={handleModeSelection}
+						createQuiz={createQuiz}
+						clearSession={clearSession}
+						setCreateQuizError={setCreateQuizError}
+					/>
 
-						{/* Upload Area */}
-						<div className="space-y-2">
-							{/* Drag & Drop Zone */}
-							<div
-								onDragEnter={handleDrag}
-								onDragLeave={handleDrag}
-								onDragOver={handleDrag}
-								onDrop={handleDrop}
-								className={`border-2 border-dashed rounded-xl px-12 py-6 flex flex-col items-center justify-center transition-all duration-300 min-h-[200px] ${
-									dragActive
-										? "border-[#a855f7] bg-[#a855f7]/10"
-										: "border-[#a855f7]/30 bg-[#252532]/30 hover:border-[#a855f7]/50 hover:bg-[#a855f7]/10"
-								}`}
-							>
-								<div className="text-center">
-									<div className="w-16 h-16 bg-gradient-to-br from-[#a855f7]/20 to-[#3b82f6]/20 rounded-xl flex items-center justify-center mb-4 mx-auto">
-										<svg
-											className="w-8 h-8 text-[#a855f7]"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-											/>
-										</svg>
-									</div>
-									<p className="text-[#f8f9fa] mb-2 font-medium">
-										Drag & drop your PDF here
-									</p>
-									<p className="text-[#a0a0b0] text-sm mb-4">or</p>
-									<label
-										htmlFor="pdf-input"
-										className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-[#a855f7] to-[#3b82f6] text-white rounded-lg font-semibold cursor-pointer hover:from-[#9333ea] hover:to-[#2563eb] transition-all duration-300 hover-glow"
-									>
-										Choose File
-									</label>
-									<input
-										ref={fileInputRef}
-										id="pdf-input"
-										type="file"
-										accept="application/pdf"
-										className="hidden"
-										onChange={handleFileChange}
-									/>
-								</div>
-							</div>
-
-							{/* Selected File */}
-							{file && (
-								<div className="p-2 bg-[#a855f7]/10 rounded-lg border border-[#a855f7]/20">
-									<div className="flex items-center justify-between">
-										<div className="flex items-center gap-3 flex-1 min-w-0">
-											<div className="w-10 h-10 bg-gradient-to-br from-[#a855f7]/20 to-[#3b82f6]/20 rounded-lg flex items-center justify-center shrink-0">
-												<svg
-													className="w-5 h-5 text-[#a855f7]"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth={2}
-														d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-													/>
-												</svg>
-											</div>
-											<div className="flex-1 min-w-0">
-												<p className="text-sm font-medium text-[#f8f9fa] truncate">
-													{file.name}
-												</p>
-												<p className="text-xs text-[#a0a0b0]">
-													{(file.size / 1024 / 1024).toFixed(2)} MB
-												</p>
-											</div>
-										</div>
-									</div>
-								</div>
-							)}
-
-							{/* Upload Progress */}
-							{uploading && (
-								<div>
-									<div className="flex items-center justify-between mb-2">
-										<span className="text-sm text-[#a0a0b0]">Uploading...</span>
-										<span className="text-sm text-[#f97316]">
-											{uploadProgress}%
-										</span>
-									</div>
-									<div className="w-full bg-[#252532] rounded-full h-2 overflow-hidden">
-										<div
-											className="h-full bg-gradient-to-r from-[#f97316] to-[#ea580c] transition-all duration-300"
-											style={{ width: `${uploadProgress}%` }}
-										/>
-									</div>
-								</div>
-							)}
-
-							{/* Success Indicator */}
-							{sessionId && !uploading && !showQuizModeSelection && (
-								<div className="p-2 bg-[#f97316]/10 border border-[#f97316]/30 rounded-lg flex items-center gap-3">
-									<div className="w-8 h-8 bg-[#f97316]/20 rounded-full flex items-center justify-center">
-										<svg
-											className="w-5 h-5 text-[#f97316]"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M5 13l4 4L19 7"
-											/>
-										</svg>
-									</div>
-									<div>
-										<p className="text-sm font-medium text-[#f97316]">
-											PDF uploaded successfully
-										</p>
-										<p className="text-xs text-[#a0a0b0]">
-											{quizMode
-												? `Mode: ${
-														quizMode === "give_quiz"
-															? "Give Quiz"
-															: "Create Quiz"
-												  }`
-												: "You can now ask questions"}
-										</p>
-									</div>
-								</div>
-							)}
-
-							{/* Quiz Mode Selection */}
-							{showQuizModeSelection && sessionId && (
-								<div className="p-4 bg-gradient-to-br from-[#a855f7]/10 to-[#3b82f6]/10 border border-[#a855f7]/30 rounded-lg">
-									<p className="text-sm font-semibold text-[#f8f9fa] mb-3 text-center">
-										Choose a mode:
-									</p>
-									<div className="grid grid-cols-2 gap-3">
-										<button
-											onClick={() => handleModeSelection("give_quiz")}
-											className={`p-4 bg-[#252532] border-2 rounded-lg transition-all text-left ${
-												selectedMode === "give_quiz"
-													? "border-[#a855f7] bg-[#a855f7]/10"
-													: "border-[#a855f7]/30 hover:border-[#a855f7] hover:bg-[#a855f7]/10"
-											}`}
-										>
-											<div className="flex items-center gap-2 mb-2">
-												<svg
-													className="w-5 h-5 text-[#a855f7]"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth={2}
-														d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-													/>
-												</svg>
-												<span className="font-semibold text-[#f8f9fa]">
-													Give me a quiz
-												</span>
-											</div>
-											<p className="text-xs text-[#a0a0b0]">
-												Interactive MCQs with scoring
-											</p>
-										</button>
-										<button
-											onClick={() => handleModeSelection("create_quiz")}
-											className={`p-4 bg-[#252532] border-2 rounded-lg transition-all text-left ${
-												selectedMode === "create_quiz"
-													? "border-[#3b82f6] bg-[#3b82f6]/10"
-													: "border-[#3b82f6]/30 hover:border-[#3b82f6] hover:bg-[#3b82f6]/10"
-											}`}
-										>
-											<div className="flex items-center gap-2 mb-2">
-												<svg
-													className="w-5 h-5 text-[#3b82f6]"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														strokeLinecap="round"
-														strokeLinejoin="round"
-														strokeWidth={2}
-														d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-													/>
-												</svg>
-												<span className="font-semibold text-[#f8f9fa]">
-													Create a quiz
-												</span>
-											</div>
-											<p className="text-xs text-[#a0a0b0]">
-												Generate & export as PDFs
-											</p>
-										</button>
-									</div>
-								</div>
-							)}
-
-							{/* Create Quiz Button - Shows after mode selection */}
-							{selectedMode &&
-								(!quizMode ||
-									(quizMode === "give_quiz" && quizQuestions.length === 0)) && (
-									<div className="space-y-3">
-										<motion.button
-											initial={{ opacity: 0, y: 10 }}
-											animate={{ opacity: 1, y: 0 }}
-											transition={{ duration: 0.3 }}
-											onClick={createQuiz}
-											disabled={isTyping || quizMode === "give_quiz"}
-											className="w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#3b82f6] text-white rounded-xl font-semibold hover:from-[#9333ea] hover:to-[#2563eb] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover-glow flex items-center justify-center gap-2"
-										>
-											{isTyping ||
-											(quizMode === "give_quiz" &&
-												quizQuestions.length === 0) ? (
-												<>
-													<svg
-														className="animate-spin h-5 w-5 text-white"
-														xmlns="http://www.w3.org/2000/svg"
-														fill="none"
-														viewBox="0 0 24 24"
-													>
-														<circle
-															className="opacity-25"
-															cx="12"
-															cy="12"
-															r="10"
-															stroke="currentColor"
-															strokeWidth="4"
-														></circle>
-														<path
-															className="opacity-75"
-															fill="currentColor"
-															d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-														></path>
-													</svg>
-													{loadingSteps[loadingStep] || "Creating Quiz"}
-												</>
-											) : (
-												"Create Quiz"
-											)}
-										</motion.button>
-
-										{/* Error Message */}
-										{createQuizError && (
-											<motion.div
-												initial={{ opacity: 0, y: -10 }}
-												animate={{ opacity: 1, y: 0 }}
-												transition={{ duration: 0.3 }}
-												className="p-4 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-lg"
-											>
-												<div className="flex items-start gap-3">
-													<svg
-														className="w-5 h-5 text-[#ef4444] shrink-0 mt-0.5"
-														fill="none"
-														stroke="currentColor"
-														viewBox="0 0 24 24"
-													>
-														<path
-															strokeLinecap="round"
-															strokeLinejoin="round"
-															strokeWidth={2}
-															d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-														/>
-													</svg>
-													<div className="flex-1">
-														<p className="text-sm font-medium text-[#ef4444] mb-1">
-															Error creating quiz
-														</p>
-														<p className="text-sm text-[#f8f9fa]">
-															{createQuizError}
-														</p>
-													</div>
-													<button
-														onClick={() => setCreateQuizError(null)}
-														className="text-[#a0a0b0] hover:text-[#f8f9fa] transition-colors"
-													>
-														<svg
-															className="w-4 h-4"
-															fill="none"
-															stroke="currentColor"
-															viewBox="0 0 24 24"
-														>
-															<path
-																strokeLinecap="round"
-																strokeLinejoin="round"
-																strokeWidth={2}
-																d="M6 18L18 6M6 6l12 12"
-															/>
-														</svg>
-													</button>
-												</div>
-											</motion.div>
-										)}
-									</div>
-								)}
-
-							{/* Clear Session Button */}
-							{sessionId && (
-								<button
-									onClick={clearSession}
-									className="mt-3 w-full py-2 border border-[#a855f7]/20 text-[#a0a0b0] rounded-lg font-medium hover:bg-[#252532] hover:border-[#a855f7]/40 transition-colors"
-								>
-									Clear Session
-								</button>
-							)}
-						</div>
-					</div>
-
-					{/* Error Display for Quiz Generation */}
-					{quizMode === "give_quiz" && generateQuizError && (
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.3 }}
-							className="bg-[#1a1a24] backdrop-blur-md rounded-2xl border border-[#ef4444]/30 p-6 shadow-lg mb-6"
-						>
-							<div className="flex items-start gap-3">
-								<svg
-									className="w-6 h-6 text-[#ef4444] shrink-0 mt-0.5"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-									/>
-								</svg>
-								<div className="flex-1">
-									<h3 className="text-lg font-semibold text-[#ef4444] mb-2">
-										Error Generating Quiz
-									</h3>
-									<p className="text-sm text-[#f8f9fa] mb-4">
-										{generateQuizError}
-									</p>
-									<button
-										onClick={() => {
-											setGenerateQuizError(null);
-											generateQuiz();
-										}}
-										className="px-4 py-2 bg-[#ef4444] text-white rounded-lg font-medium hover:bg-[#dc2626] transition-colors"
-									>
-										Try Again
-									</button>
-								</div>
-								<button
-									onClick={() => setGenerateQuizError(null)}
-									className="text-[#a0a0b0] hover:text-[#f8f9fa] transition-colors"
-								>
-									<svg
-										className="w-5 h-5"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M6 18L18 6M6 6l12 12"
-										/>
-									</svg>
-								</button>
-							</div>
-						</motion.div>
+					{quizMode === "give_quiz" && (
+						<ErrorDisplay
+							generateQuizError={generateQuizError}
+							setGenerateQuizError={setGenerateQuizError}
+							generateQuiz={generateQuiz}
+						/>
 					)}
 
-					{/* Quiz Display Section - Below Upload */}
-					{quizMode === "give_quiz" && quizQuestions.length > 0 && (
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.5 }}
-							className="bg-[#1a1a24] backdrop-blur-md rounded-2xl border border-[#a855f7]/20 p-6 shadow-lg mb-6"
-						>
-							<h2 className="text-2xl font-semibold mb-6 text-[#f8f9fa]">
-								Quiz Questions
-							</h2>
-							<div className="space-y-6">
-								{quizQuestions.map((q, idx) => {
-									const userAnswer = userAnswers[idx];
-									const result = quizResults?.results?.find(
-										(r: any) => r.question_index === idx
-									);
-									const isCorrect = result?.is_correct;
-									const showResult = quizSubmitted && result;
-
-									return (
-										<motion.div
-											key={idx}
-											initial={{ opacity: 0, x: -20 }}
-											animate={{ opacity: 1, x: 0 }}
-											transition={{ duration: 0.4, delay: idx * 0.1 }}
-											className={`p-5 bg-[#252532] border-2 rounded-xl ${
-												showResult
-													? isCorrect
-														? "border-[#10b981] bg-[#10b981]/10"
-														: "border-[#ef4444] bg-[#ef4444]/10"
-													: "border-[#a855f7]/30"
-											}`}
-										>
-											<div className="flex items-start gap-3 mb-4">
-												<div className="w-8 h-8 bg-gradient-to-br from-[#a855f7] to-[#3b82f6] rounded-lg flex items-center justify-center text-white font-bold shrink-0">
-													{idx + 1}
-												</div>
-												<div className="flex-1">
-													<p className="font-semibold text-[#f8f9fa] mb-3">
-														{q.question}
-													</p>
-													<div className="space-y-2">
-														{q.options.map((option: string, optIdx: number) => {
-															const optionLabels = ["A", "B", "C", "D"];
-															const isSelected = userAnswer === optIdx;
-															const isCorrectOption =
-																result?.correct_answer === optIdx;
-
-															return (
-																<button
-																	key={optIdx}
-																	onClick={() =>
-																		handleAnswerSelect(idx, optIdx)
-																	}
-																	disabled={quizSubmitted}
-																	className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
-																		quizSubmitted
-																			? isCorrectOption
-																				? "border-[#10b981] bg-[#10b981]/20 text-[#f8f9fa]"
-																				: isSelected && !isCorrectOption
-																				? "border-[#ef4444] bg-[#ef4444]/20 text-[#f8f9fa]"
-																				: "border-[#252532] bg-[#1a1a24] text-[#a0a0b0]"
-																			: isSelected
-																			? "border-[#a855f7] bg-[#a855f7]/20 text-[#f8f9fa]"
-																			: "border-[#252532] hover:border-[#a855f7]/50 hover:bg-[#a855f7]/10 text-[#f8f9fa]"
-																	} ${
-																		quizSubmitted
-																			? "cursor-default"
-																			: "cursor-pointer"
-																	}`}
-																>
-																	<span className="font-semibold text-[#3b82f6] mr-2">
-																		{optionLabels[optIdx]}.
-																	</span>
-																	{option}
-																	{quizSubmitted && isCorrectOption && (
-																		<span className="ml-2 text-[#10b981] font-semibold">
-																			✓ Correct
-																		</span>
-																	)}
-																	{quizSubmitted &&
-																		isSelected &&
-																		!isCorrectOption && (
-																			<span className="ml-2 text-[#ef4444] font-semibold">
-																				✗ Your answer
-																			</span>
-																		)}
-																</button>
-															);
-														})}
-													</div>
-													{quizSubmitted && result?.explanation && (
-														<div className="mt-3 p-3 bg-[#f97316]/10 border border-[#f97316]/30 rounded-lg">
-															<p className="text-sm text-[#f8f9fa]">
-																<span className="font-semibold">
-																	Explanation:{" "}
-																</span>
-																{quizResults.explanations[idx]}
-															</p>
-														</div>
-													)}
-												</div>
-											</div>
-										</motion.div>
-									);
-								})}
-							</div>
-
-							{/* Submit Button */}
-							{!quizSubmitted && (
-								<motion.button
-									whileHover={{ scale: 1.02 }}
-									whileTap={{ scale: 0.98 }}
-									onClick={submitQuiz}
-									disabled={
-										Object.keys(userAnswers).length !== quizQuestions.length ||
-										isTyping
-									}
-									className="mt-6 w-full py-4 bg-gradient-to-r from-[#a855f7] to-[#3b82f6] text-white rounded-xl font-semibold hover:from-[#9333ea] hover:to-[#2563eb] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-								>
-									Submit Quiz
-								</motion.button>
-							)}
-
-							{/* Results Display */}
-							<AnimatePresence>
-								{quizSubmitted && quizResults && (
-									<motion.div
-										initial={{ opacity: 0, scale: 0.9 }}
-										animate={{ opacity: 1, scale: 1 }}
-										exit={{ opacity: 0, scale: 0.9 }}
-										transition={{ duration: 0.5 }}
-										className="mt-6 p-6 bg-gradient-to-br from-[#a855f7]/10 to-[#3b82f6]/10 border-2 border-[#a855f7]/30 rounded-xl text-center"
-									>
-										<h3 className="text-2xl font-bold text-[#f8f9fa] mb-2">
-											Your Score
-										</h3>
-										<p className="text-4xl font-bold text-[#a855f7] mb-2">
-											{quizResults.total_score} / {quizResults.total_questions}
-										</p>
-										<p className="text-sm text-[#a0a0b0]">
-											{Math.round(
-												(quizResults.total_score /
-													quizResults.total_questions) *
-													100
-											)}
-											% Correct
-										</p>
-									</motion.div>
-								)}
-							</AnimatePresence>
-						</motion.div>
+					{quizMode === "give_quiz" && (
+						<QuizDisplay
+							quizQuestions={quizQuestions}
+							userAnswers={userAnswers}
+							quizSubmitted={quizSubmitted}
+							quizResults={quizResults}
+							isTyping={isTyping}
+							handleAnswerSelect={handleAnswerSelect}
+							submitQuiz={submitQuiz}
+						/>
 					)}
 
-					{/* Create Quiz Generate Button */}
-					{quizMode === "create_quiz" && !quizGenerated && (
-						<div className="bg-[#1a1a24] backdrop-blur-md rounded-2xl border border-[#3b82f6]/20 p-6 shadow-lg mb-6 space-y-4">
-							<button
-								onClick={generateCreateQuiz}
-								disabled={isTyping}
-								className="w-full py-3 bg-gradient-to-r from-[#3b82f6] to-[#a855f7] text-white rounded-lg font-semibold hover:from-[#2563eb] hover:to-[#9333ea] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-							>
-								{isTyping ? "Generating..." : "Generate Quiz"}
-							</button>
-
-							{/* Error Message for Create Quiz Generation */}
-							{generateCreateQuizError && (
-								<motion.div
-									initial={{ opacity: 0, y: -10 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ duration: 0.3 }}
-									className="p-4 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-lg"
-								>
-									<div className="flex items-start gap-3">
-										<svg
-											className="w-5 h-5 text-[#ef4444] shrink-0 mt-0.5"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-											/>
-										</svg>
-										<div className="flex-1">
-											<p className="text-sm font-medium text-[#ef4444] mb-1">
-												Error generating quiz
-											</p>
-											<p className="text-sm text-[#f8f9fa]">
-												{generateCreateQuizError}
-											</p>
-										</div>
-										<button
-											onClick={() => setGenerateCreateQuizError(null)}
-											className="text-[#a0a0b0] hover:text-[#f8f9fa] transition-colors"
-										>
-											<svg
-												className="w-4 h-4"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M6 18L18 6M6 6l12 12"
-												/>
-											</svg>
-										</button>
-									</div>
-								</motion.div>
-							)}
-						</div>
+					{quizMode === "create_quiz" && (
+						<CreateQuizSection
+							quizGenerated={quizGenerated}
+							isTyping={isTyping}
+							generateCreateQuizError={generateCreateQuizError}
+							generateCreateQuiz={generateCreateQuiz}
+							setGenerateCreateQuizError={setGenerateCreateQuizError}
+						/>
 					)}
 
-					{/* PDF Print Card - Separate Card */}
 					{quizMode === "create_quiz" && quizGenerated && (
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.5 }}
-							className="bg-[#1a1a24] backdrop-blur-md rounded-2xl border border-[#3b82f6]/20 p-6 shadow-lg mb-6"
-						>
-							<h2 className="text-xl font-semibold mb-4 text-[#f8f9fa]">
-								Export Quiz
-							</h2>
-							<p className="text-sm text-[#a0a0b0] mb-4">
-								Download your quiz as PDF files for printing or sharing.
-							</p>
-							<div className="grid md:grid-cols-2 gap-4">
-								<button
-									onClick={() => printToPDF("questions")}
-									className="py-4 bg-gradient-to-r from-[#a855f7] to-[#3b82f6] text-white rounded-lg font-semibold hover:from-[#9333ea] hover:to-[#2563eb] transition-all duration-300 flex items-center justify-center gap-2"
-								>
-									<svg
-										className="w-5 h-5"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-										/>
-									</svg>
-									Print Questions PDF
-								</button>
-								<button
-									onClick={() => printToPDF("answers")}
-									className="py-4 bg-gradient-to-r from-[#3b82f6] to-[#a855f7] text-white rounded-lg font-semibold hover:from-[#2563eb] hover:to-[#9333ea] transition-all duration-300 flex items-center justify-center gap-2"
-								>
-									<svg
-										className="w-5 h-5"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-										/>
-									</svg>
-									Print Answers PDF
-								</button>
-							</div>
-						</motion.div>
+						<PdfExport printToPDF={printToPDF} />
 					)}
 				</div>
 			</div>
