@@ -2,7 +2,7 @@
 
 Modern web application for Quizzio built with Next.js, React, and TypeScript. This frontend provides an intuitive interface for uploading PDFs, generating quizzes, and taking interactive tests.
 
-![Quizzio Hero](public/hero.png)
+![Quizzio Hero](../../images/hero.png)
 
 ## Overview
 
