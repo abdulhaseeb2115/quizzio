@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Ubuntu } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
@@ -9,10 +9,11 @@ const inter = Inter({
 	display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-	variable: "--font-space-grotesk",
+const ubuntu = Ubuntu({
+	variable: "--font-ubuntu",
 	subsets: ["latin"],
 	display: "swap",
+	weight: ["300", "400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${inter.variable} ${spaceGrotesk.variable} antialiased bg-[#0a0a0f] text-[#f8f9fa] max-h-screen`}
+				className={`${inter.variable} ${ubuntu.variable} antialiased bg-[#0a0a0f] text-[#f8f9fa] max-h-screen`}
 			>
 				<Navbar />
 				{children}
